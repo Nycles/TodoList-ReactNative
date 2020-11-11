@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react"
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native"
-import { CreateItem } from "./CreateTask/CreateTask"
+import { CreateTask } from "./CreateTask/CreateTask"
 import { Keyboard } from "react-native"
 import TaskList from "./TaskList/TaskList"
+import { connect } from "react-redux"
 
-export const TodoList = (props) => {
+import { addTask, removeTask, updateCompletedTask } from "../../redux/reducers/tasksReducer"
+
+const TodoList = (props) => {
   const [modalOpen, setModalOpen] = useState(false)
   const [keyboardOpen, setKeyboardOpen] = useState(false)
 
@@ -23,22 +26,24 @@ export const TodoList = (props) => {
 
   return (
     <View style={styles.container}>
-      <CreateItem modalOpen={modalOpen} setModalOpen={setModalOpen} />
+      <CreateTask modalOpen={modalOpen} setModalOpen={setModalOpen} addTask={props.addTask} />
 
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Todo List</Text>
       </View>
 
       <View style={styles.main}>
-        <TaskList />
+        <TaskList
+          navigation={props.navigation}
+          tasks={props.tasks}
+          removeTask={props.removeTask}
+          updateCompletedTask={props.updateCompletedTask}
+        />
       </View>
 
       <View style={styles.footer}>
         {keyboardOpen ? null : modalOpen ? null : (
-          <TouchableOpacity
-            onPress={() => setModalOpen(true)}
-            activeOpacity={0.4}
-          >
+          <TouchableOpacity onPress={() => setModalOpen(true)} activeOpacity={0.4}>
             <View style={styles.button}>
               <Text style={{ color: "#fff", fontSize: 30 }}>+</Text>
             </View>
@@ -52,9 +57,10 @@ export const TodoList = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
   },
   header: {
-    height: 50,
+    height: 56,
     backgroundColor: "#2e2e2e",
     justifyContent: "center",
     alignItems: "center",
@@ -83,3 +89,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 })
+
+mapStateToProps = (state) => {
+  return {
+    tasks: state.tasks,
+  }
+}
+
+export default connect(mapStateToProps, { addTask, removeTask, updateCompletedTask })(TodoList)

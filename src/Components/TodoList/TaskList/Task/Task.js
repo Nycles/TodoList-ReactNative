@@ -5,12 +5,18 @@ import CheckBox from "@react-native-community/checkbox"
 const Task = (props) => {
   return (
     <TouchableHighlight
-      underlayColor={"#E7E7E7"}
-      onPress={() => alert("Нажато!")}
       style={styles.taskWrapper}
+      underlayColor={"#E7E7E7"}
+      onPress={() => props.navigation.navigate("TaskPage", { title: props.title })}
+      onLongPress={() => props.removeTask(props.id)}
     >
       <View style={styles.task}>
-        <CheckBox style={styles.checkbox} />
+        <CheckBox
+          style={styles.checkbox}
+          disabled={false}
+          value={props.completed}
+          onValueChange={(newValue) => props.updateCompletedTask(newValue, props.id)}
+        />
         <Text style={styles.title} numberOfLines={1}>
           {props.title}
         </Text>
